@@ -1,8 +1,8 @@
-import { useEffect, useRef } from 'react';
+import {useEffect, useRef} from 'react';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
-function BusMap({ reports = [] }) {
+function BusMap({reports = []}) {
     const mapRef = useRef(null);
     const mapInstanceRef = useRef(null);
 
@@ -80,11 +80,11 @@ function BusMap({ reports = [] }) {
                 shadowSize: [41, 41]
             });
 
-            const marker = L.marker([lat, lng], { icon: redIcon })
+            const marker = L.marker([lat, lng], {icon: redIcon})
                 .addTo(map)
                 .bindPopup(`
           <div style="text-align: right; direction: rtl; min-width: 150px;">
-            <h4 style="margin: 0 0 8px 0; color: #dc2626;">🚌 צדוק בשטח!</h4>
+                     <h4 style="margin: 0 0 8px 0; color: #dc2626;">🚌 צדוק בשטח!</h4>
             <p style="margin: 4px 0;"><strong>אוטובוס:</strong> ${report.busNumber}</p>
             <p style="margin: 4px 0;"><strong>כיוון:</strong> ${report.direction}</p>
             <p style="margin: 4px 0; color: #666;"><strong>לפני:</strong> ${minutesAgo} דקות</p>
@@ -98,7 +98,7 @@ function BusMap({ reports = [] }) {
     const reportCount = reports.length;
 
     return (
-        <div style={{ position: 'relative' }}>
+        <div style={{position: 'relative'}}>
             {/* Map container */}
             <div
                 ref={mapRef}

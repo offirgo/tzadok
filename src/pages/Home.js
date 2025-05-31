@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import {useState} from 'react';
 import Header from '../components/Header';
 import BusMap from '../components/BusMap';
 import BusReportForm from '../components/BusReportForm';
-import { User } from '../entities/User';
-import { Report } from '../entities/Report';
-import { getCurrentLocation, isLocationAccurate } from '../utils/geolocation';
+import {User} from '../entities/User';
+import {Report} from '../entities/Report';
+import {getCurrentLocation, isLocationAccurate} from '../utils/geolocation';
 
 
 function Home() {
@@ -81,10 +81,10 @@ function Home() {
 
     return (
         <div>
-            <Header />
-            <main style={{ padding: '2rem' }}>
-                <BusMap reports={reports} />
-                <div style={{ textAlign: 'center', marginTop: '2rem' }}>
+            <Header/>
+            <main style={{padding: '2rem'}}>
+                <BusMap reports={reports}/>
+                <div style={{textAlign: 'center', marginTop: '2rem'}}>
                     <button
                         onClick={handleOpenReportForm}
                         style={{
@@ -102,7 +102,7 @@ function Home() {
                 </div>
 
                 {reports.length > 0 && (
-                    <div style={{ marginTop: '2rem', textAlign: 'center' }}>
+                    <div style={{marginTop: '2rem', textAlign: 'center'}}>
                         <h3>דיווחים אחרונים:</h3>
                         {reports.slice(-3).map(report => (
                             <div key={report.id} style={{
