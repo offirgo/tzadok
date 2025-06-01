@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import Header from '../components/Header';
 import BusMap from '../components/BusMap';
 import BusReportForm from '../components/BusReportForm';
@@ -13,6 +13,28 @@ function Home() {
     const [userLocation, setUserLocation] = useState(null);
 
 
+// Auto-cleanup expired reports every minute
+    useEffect(() => {
+        const cleanupInterval = setInterval(() => {
+            const activeReports = Report.getActiveReports();
+            setReports(activeReports); // This will trigger map update
+        }, 60000); // Check every minute
+
+        return () => clearInterval(cleanupInterval); // Cleanup on unmount
+    }, []);
+    // Auto-open report form after login
+    // Auto-open report form after login
+    useEffect(() => {
+        const shouldOpenReport = localStorage.getItem('open_report_after_login');
+        if (shouldOpenReport) {
+            localStorage.removeItem('open_report_after_login'); // Clear flag
+            // Small delay to ensure everything is loaded
+            setTimeout(() => {
+                handleOpenReportForm();
+            }, 500);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
     const handleOpenReportForm = async () => {
         try {
             // First check if user is logged in
@@ -36,7 +58,8 @@ function Home() {
 
         } catch (error) {
             if (error.message.includes('Not logged in')) {
-                alert('יש להתחבר כדי לדווח על צדוק תחבורתי');
+                // Trigger Google login
+                User.login();
             } else {
                 // Location error with helpful instructions
                 const retry = window.confirm(
@@ -84,7 +107,14 @@ function Home() {
             <Header/>
             <main style={{padding: '2rem'}}>
                 <BusMap reports={reports}/>
-                <div style={{textAlign: 'center', marginTop: '2rem'}}>
+                <div style={{
+                    textAlign: 'center',
+                    marginTop: '2rem',
+                    display: 'flex',
+                    gap: '10px',
+                    justifyContent: 'center',
+                    flexWrap: 'wrap'
+                }}>
                     <button
                         onClick={handleOpenReportForm}
                         style={{
@@ -97,27 +127,87 @@ function Home() {
                             cursor: 'pointer'
                         }}
                     >
-                        🚌 דווח על צדוק כאן
+                        {(() => {
+                            try {
+                                const userData = localStorage.getItem('current_user');
+                                return userData ? 'ראיתי את צדוק ואני רוצה לדווח  ולעזור לשרה רגב' : '🔑 התחבר ודווח';
+                            } catch {
+                                return '🔑 התחבר ודווח';
+                            }
+                        })()}
                     </button>
-                </div>
 
-                {reports.length > 0 && (
-                    <div style={{marginTop: '2rem', textAlign: 'center'}}>
-                        <h3>דיווחים אחרונים:</h3>
-                        {reports.slice(-3).map(report => (
-                            <div key={report.id} style={{
-                                backgroundColor: '#f3f4f6',
-                                padding: '1rem',
-                                margin: '0.5rem auto',
-                                borderRadius: '4px',
-                                maxWidth: '400px'
-                            }}>
-                                <p><strong>אוטובוס {report.busNumber}</strong> - {report.direction}</p>
-                                <small>לפני {Math.floor((Date.now() - report.timestamp) / 60000)} דקות</small>
-                            </div>
-                        ))}
-                    </div>
-                )}
+                    {/* Show logout button only when logged in */}
+                    {(() => {
+                        try {
+                            const userData = localStorage.getItem('current_user');
+                            if (userData) {
+                                return (
+                                    <button
+                                        onClick={() => User.logout()}
+                                        style={{
+                                            backgroundColor: '#6b7280',
+                                            color: 'white',
+                                            padding: '8px',
+                                            border: 'none',
+                                            borderRadius: '50%',
+                                            fontSize: '14px',
+                                            cursor: 'pointer',
+                                            width: '36px',
+                                            height: '36px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center'
+                                        }}
+                                        title="התנתק"
+                                    >
+                                        ✕
+                                    </button>
+                                );
+                            }
+                        } catch (error) {
+                            // Not logged in
+                        }
+                        return null;
+                    })()}
+
+                </div>
+                {/* Privacy disclaimer */}
+                <div style={{
+                    maxWidth: '600px',
+                    margin: '2rem auto 0 auto',
+                    padding: '0rem',
+                    backgroundColor: '#f8f9fa',
+                    borderRadius: '8px',
+                    fontSize: '12px',
+                    lineHeight: '1.4',
+                    color: '#666',
+                    direction: 'rtl',
+                    textAlign: 'right'
+                }}>
+
+                    <p style={{margin: '0.5rem 0', fontSize: '10px'}}>
+                        הדיווחים הם תמיד אנונימיים לחלוטין
+                    </p>
+                    <p style={{margin: '0.5rem 0', fontSize: '10px'}}>
+                        האפליקציה לא שומרת שום סוג של מידע על המשתמשים
+                    </p>
+                    <p style={{margin: '0.5rem 0', fontSize: '10px'}}>
+                        נדרשים התחברות וגישה למיקום למניעת שימוש ברעה ולטובת אמינות הדיווחים
+                    </p>
+                    <p style={{margin: '0.5rem 0', fontSize: '10px'}}>
+                        האפליקציה תורד לאלתר ברגע ששרת התחבורה תמצא את (ה)צדוק
+                    </p>
+
+                    <p style={{margin: '0.5rem 0', fontSize: '10px'}}>
+                        כל דיווח יורד אוטומטית לאחר 15 דקות
+                    </p>
+
+                    <p style={{margin: '0.5rem 0', fontSize: '10px', fontWeight: 'bold', color: '#d97706'}}>
+                        ⚠️ למען הסר ספק אנחנו ממליצים תמיד לתקף את הנסיעות שלכם בתחבורה הציבורית, מציאת צדוק אינה תחליף
+                        לתיקוף
+                    </p>
+                </div>
             </main>
 
             <BusReportForm
@@ -126,6 +216,7 @@ function Home() {
                 onSubmit={handleSubmitReport}
             />
         </div>
+
     );
 }
 

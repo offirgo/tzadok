@@ -1,6 +1,7 @@
 import {useEffect, useRef} from 'react';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
+import {getCurrentLocation} from '../utils/geolocation';
 
 function BusMap({reports = []}) {
     const mapRef = useRef(null);
@@ -11,8 +12,9 @@ function BusMap({reports = []}) {
         if (mapInstanceRef.current) return; // Map already exists
 
         // Create map centered on Tel Aviv
-        const map = L.map(mapRef.current).setView([32.0853, 34.7818], 12);
-
+        const map = L.map(mapRef.current, {
+            zoomControl: false // Remove + - buttons
+        }).setView([32.0853, 34.7818], 12);
         // Add OpenStreetMap tiles (free!)
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© OpenStreetMap contributors'
@@ -36,6 +38,22 @@ function BusMap({reports = []}) {
             }
         };
     }, []);
+    // Auto-center on user location when map loads
+    useEffect(() => {
+        if (!mapInstanceRef.current) return;
+
+        const centerOnUser = async () => {
+            try {
+                const location = await getCurrentLocation();
+                mapInstanceRef.current.setView([location.lat, location.lng], 14);
+            } catch (error) {
+                // Location not available, keep default Tel Aviv center
+                console.log('Location not available on load:', error.message);
+            }
+        };
+
+        centerOnUser();
+    }, [mapInstanceRef.current]);
     // Add markers for reports
     useEffect(() => {
         if (!mapInstanceRef.current) return;
@@ -96,7 +114,18 @@ function BusMap({reports = []}) {
     }, [reports]); // Run when reports change
 
     const reportCount = reports.length;
+    const handleCenterOnUser = async () => {
+        try {
+            const location = await getCurrentLocation();
 
+            if (mapInstanceRef.current) {
+                // Just center the map, don't add markers
+                mapInstanceRef.current.setView([location.lat, location.lng], 16);
+            }
+        } catch (error) {
+            alert(`כדי להשתמש במיקום שלי, יש לאפשר גישה למיקום:\n${error.message}`);
+        }
+    };
     return (
         <div style={{position: 'relative'}}>
             {/* Map container */}
@@ -104,29 +133,61 @@ function BusMap({reports = []}) {
                 ref={mapRef}
                 style={{
                     width: '100%',
-                    height: '400px',
+                    height: '300px',
                     borderRadius: '8px',
                     border: '1px solid #ddd'
                 }}
             />
 
-            {/* Report counter overlay */}
-            {reportCount > 0 && (
+            {/* Map status overlay - horizontally centered at top when no reports */}
+            {reportCount === 0 && (
                 <div style={{
                     position: 'absolute',
                     top: '10px',
-                    right: '10px',
-                    backgroundColor: 'rgba(255,255,255,0.9)',
-                    padding: '8px 12px',
-                    borderRadius: '6px',
-                    fontSize: '14px',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    backgroundColor: 'rgba(255,255,255,0.95)',
+                    padding: '12px 16px',
+                    borderRadius: '8px',
+                    fontSize: '10px',
+                    width: '80%',
+                    maxWidth: '400px',
                     fontWeight: 'bold',
-                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                    zIndex: 1000
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+                    zIndex: 1000,
+                    direction: 'rtl',
+                    textAlign: 'center',
+                    lineHeight: '1'
                 }}>
-                    🚨 {reportCount} דיווחים פעילים
+                    אין דיווחים עדיין<br/>
+                    ספר לשרה ולכולם היכן ראית את צדוק
                 </div>
             )}
+            {/* My Location button */}
+            <button
+                onClick={handleCenterOnUser}
+                style={{
+                    position: 'absolute',
+                    bottom: '20px',
+                    right: '10px',
+                    backgroundColor: 'white',
+                    color: '#4285f4',
+                    border: '2px solid #4285f4',
+                    borderRadius: '50%',
+                    width: '44px',
+                    height: '44px',
+                    fontSize: '18px',
+                    cursor: 'pointer',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+                    zIndex: 1000,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                }}
+                title="מיקום שלי"
+            >
+                🎯
+            </button>
         </div>
     );
 }

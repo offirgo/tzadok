@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import {useState} from 'react';
 
-function BusReportForm({ isOpen, onClose, onSubmit }) {
+function BusReportForm({isOpen, onClose, onSubmit}) {
     const [busNumber, setBusNumber] = useState('');
     const [direction, setDirection] = useState('');
 
@@ -37,16 +37,18 @@ function BusReportForm({ isOpen, onClose, onSubmit }) {
                 backgroundColor: 'white',
                 padding: '2rem',
                 borderRadius: '8px',
-                width: '90%',
+                width: '80%',
                 maxWidth: '400px'
             }}>
-                <h3 style={{ marginBottom: '1rem', textAlign: 'center' }}>
+                <h3 style={{marginBottom: '1rem', textAlign: 'center'}}>
                     דיווח על צדוק תחבורתי
                 </h3>
 
                 <form onSubmit={handleSubmit}>
-                    <div style={{ marginBottom: '1rem' }}>
-                        <label style={{ display: 'block', marginBottom: '0.5rem' }}>
+                    <div style={{marginBottom: '1rem'}}>
+                        <label style={{
+                            display: 'block', marginBottom: '0.5rem', direction: 'rtl'
+                        }}>
                             מספר אוטובוס:
                         </label>
                         <input
@@ -58,32 +60,37 @@ function BusReportForm({ isOpen, onClose, onSubmit }) {
                                 width: '100%',
                                 padding: '8px',
                                 border: '1px solid #ccc',
-                                borderRadius: '4px'
+                                borderRadius: '4px',
+                                direction: 'rtl'
                             }}
                             required
                         />
                     </div>
 
-                    <div style={{ marginBottom: '1.5rem' }}>
-                        <label style={{ display: 'block', marginBottom: '0.5rem' }}>
+                    <div style={{marginBottom: '1.5rem'}}>
+                        <label style={{
+                            display: 'block', marginBottom: '0.5rem', direction: 'rtl'
+                        }}>
                             כיוון:
                         </label>
                         <input
                             type="text"
                             value={direction}
                             onChange={(e) => setDirection(e.target.value)}
-                            placeholder="לדוגמה: תל אביב ← ירושלים"
+                            placeholder={"לדוגמה: ירושלים, פלורנטין, רכבת מרכז"}
                             style={{
                                 width: '100%',
                                 padding: '8px',
                                 border: '1px solid #ccc',
-                                borderRadius: '4px'
+                                borderRadius: '4px',
+                                direction: 'rtl'
+
                             }}
                             required
                         />
                     </div>
 
-                    <div style={{ display: 'flex', gap: '1rem' }}>
+                    <div style={{display: 'flex', gap: '1rem'}}>
                         <button
                             type="submit"
                             style={{
