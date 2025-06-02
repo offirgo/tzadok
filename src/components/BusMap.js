@@ -56,62 +56,63 @@ function BusMap({reports = []}) {
     }, [mapInstanceRef.current]);
     // Add markers for reports
     useEffect(() => {
-        if (!mapInstanceRef.current) return;
+        if (!mapInstanceRef.current || !Array.isArray(reports)) return;
 
         const map = mapInstanceRef.current;
 
-        // Clear existing markers (we'll store them on the map object)
+        // Clear existing markers
         if (map.reportMarkers) {
             map.reportMarkers.forEach(marker => map.removeLayer(marker));
         }
         map.reportMarkers = [];
 
-        // Add marker for each report with offset for overlapping locations
-        reports.forEach((report, index) => {
-            const timeDiff = Date.now() - report.timestamp;
-            const minutesAgo = Math.floor(timeDiff / 60000);
+        // Add marker for each report (only if reports is a valid array)
+        if (reports && reports.length > 0) {
+            reports.forEach((report, index) => {
+                const timeDiff = Date.now() - report.timestamp;
+                const minutesAgo = Math.floor(timeDiff / 60000);
 
-            // Check for nearby markers and add small offset
-            let lat = report.location.lat;
-            let lng = report.location.lng;
+                // Check for nearby markers and add small offset
+                let lat = report.location.lat;
+                let lng = report.location.lng;
 
-            // Add tiny offset for overlapping markers (0.0001 degrees ≈ ~10 meters)
-            const sameLocationReports = reports.slice(0, index).filter(prevReport => {
-                const latDiff = Math.abs(prevReport.location.lat - report.location.lat);
-                const lngDiff = Math.abs(prevReport.location.lng - report.location.lng);
-                return latDiff < 0.0005 && lngDiff < 0.0005; // Within ~50 meters
-            });
+                const sameLocationCount = reports.slice(0, index).filter(prevReport => {
+                    const latDiff = Math.abs(prevReport.location.lat - report.location.lat);
+                    const lngDiff = Math.abs(prevReport.location.lng - report.location.lng);
+                    return latDiff < 0.001 && lngDiff < 0.001;
+                }).length;
 
-            if (sameLocationReports.length > 0) {
-                const offsetIndex = sameLocationReports.length;
-                lat += (offsetIndex * 0.0001 * (offsetIndex % 2 === 0 ? 1 : -1));
-                lng += (offsetIndex * 0.0001 * (offsetIndex % 2 === 0 ? 1 : -1));
-            }
+                if (sameLocationCount > 0) {
+                    const angle = (sameLocationCount * 60) * (Math.PI / 180);
+                    const offset = 0.0001;
+                    lat += Math.cos(angle) * offset;
+                    lng += Math.sin(angle) * offset;
+                }
 
-            // Create RED pin marker (simple approach)
-            const redIcon = L.icon({
-                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
-                shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-                iconSize: [25, 41],
-                iconAnchor: [12, 41],
-                popupAnchor: [1, -34],
-                shadowSize: [41, 41]
-            });
+                const redIcon = L.icon({
+                    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+                    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+                    iconSize: [25, 41],
+                    iconAnchor: [12, 41],
+                    popupAnchor: [1, -34],
+                    shadowSize: [41, 41]
+                });
 
-            const marker = L.marker([lat, lng], {icon: redIcon})
-                .addTo(map)
-                .bindPopup(`
+                const marker = L.marker([lat, lng], {icon: redIcon})
+                    .addTo(map)
+                    .bindPopup(`
           <div style="text-align: right; direction: rtl; min-width: 150px;">
-                     <h4 style="margin: 0 0 8px 0; color: #dc2626;">🚌 צדוק בשטח!</h4>
+            <h4 style="margin: 0 0 8px 0; color: #dc2626;">🚌 צדוק בשטח!</h4>
             <p style="margin: 4px 0;"><strong>אוטובוס:</strong> ${report.busNumber}</p>
             <p style="margin: 4px 0;"><strong>כיוון:</strong> ${report.direction}</p>
             <p style="margin: 4px 0; color: #666;"><strong>לפני:</strong> ${minutesAgo} דקות</p>
           </div>
         `);
 
-            map.reportMarkers.push(marker);
-        });
-    }, [reports]); // Run when reports change
+                map.reportMarkers.push(marker);
+            });
+        }
+    }, [reports]);
 
     const reportCount = reports.length;
     const handleCenterOnUser = async () => {

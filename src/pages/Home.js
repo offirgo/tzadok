@@ -9,10 +9,23 @@ import {getCurrentLocation, isLocationAccurate} from '../utils/geolocation';
 
 function Home() {
     const [isReportFormOpen, setIsReportFormOpen] = useState(false);
-    const [reports, setReports] = useState(Report.getActiveReports());
+    const [reports, setReports] = useState([]); // Start with empty array
     const [userLocation, setUserLocation] = useState(null);
 
+// Load reports when component mounts
+    useEffect(() => {
+        const loadInitialReports = async () => {
+            try {
+                const initialReports = await Report.getActiveReports();
+                setReports(initialReports || []); // Ensure it's always an array
+            } catch (error) {
+                console.error('Error loading initial reports:', error);
+                setReports([]); // Fallback to empty array
+            }
+        };
 
+        loadInitialReports();
+    }, []);
 // Auto-cleanup expired reports every minute
     useEffect(() => {
         const cleanupInterval = setInterval(() => {
@@ -22,7 +35,21 @@ function Home() {
 
         return () => clearInterval(cleanupInterval); // Cleanup on unmount
     }, []);
-    // Auto-open report form after login
+    // Auto-refresh reports from Firebase every 60 seconds
+    useEffect(() => {
+        const refreshReports = async () => {
+            try {
+                const freshReports = await Report.getActiveReports();
+                setReports(freshReports || []); // Ensure it's always an array
+            } catch (error) {
+                console.error('Error refreshing reports:', error);
+                // Don't update reports if there's an error
+            }
+        };
+
+        const interval = setInterval(refreshReports, 15000);
+        return () => clearInterval(interval);
+    }, []);
     // Auto-open report form after login
     useEffect(() => {
         const shouldOpenReport = localStorage.getItem('open_report_after_login');
