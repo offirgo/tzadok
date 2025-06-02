@@ -82,7 +82,6 @@ function Home() {
         try {
             // Re-check location at submission time (mandatory!)
             const currentLocation = await getCurrentLocation();
-            console.log('Location at submission:', currentLocation);
 
             // Check if location is accurate enough
             if (!isLocationAccurate(currentLocation)) {
@@ -92,13 +91,18 @@ function Home() {
                 if (!proceed) return;
             }
 
-            // Submit with current location
-            const newReport = Report.addReport(reportData, currentLocation);
-            setReports(Report.getActiveReports());
-            console.log('New report with fresh location:', newReport);
+            // Submit to Firebase
+            await Report.addReport(reportData, currentLocation);
+
+            // Refresh reports from Firebase
+            const updatedReports = await Report.getActiveReports();
+            setReports(updatedReports);
+
+            console.log('Report saved to Firebase successfully!');
 
         } catch (error) {
-            alert(`גישה למיקום נדרשת לשליחת הדיווח.\n${error.message}\n\nהדיווח לא נשלח.`);
+            console.error('Error submitting report:', error);
+            alert(`שגיאה בשליחת הדיווח: ${error.message}`);
         }
     };
 

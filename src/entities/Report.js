@@ -1,52 +1,59 @@
+import {db} from '../firebase';
+import {addDoc, collection, getDocs, orderBy, query, serverTimestamp, where} from 'firebase/firestore';
+
 export const Report = {
-    // Get all active reports (not expired)
-    getActiveReports() {
+    // Get all active reports from Firebase
+    async getActiveReports() {
         try {
-            const storedReports = localStorage.getItem('busReports');
-            if (!storedReports) return [];
+            const reportsRef = collection(db, 'reports');
+            const fifteenMinutesAgo = Date.now() - (15 * 60 * 1000);
 
-            const allReports = JSON.parse(storedReports);
-            const now = Date.now();
-            const fifteenMinutes = 15 * 60 * 1000; // 15 minutes in milliseconds
-
-            // Filter out expired reports (older than 30 minutes)
-            const activeReports = allReports.filter(
-                report => (now - report.timestamp) < fifteenMinutes
+            // Query for reports newer than 15 minutes
+            const q = query(
+                reportsRef,
+                where('timestamp', '>', fifteenMinutesAgo),
+                orderBy('timestamp', 'desc')
             );
 
-            // Update localStorage with only active reports
-            localStorage.setItem('busReports', JSON.stringify(activeReports));
+            const querySnapshot = await getDocs(q);
+            const reports = [];
 
-            return activeReports;
+            querySnapshot.forEach((doc) => {
+                reports.push({
+                    id: doc.id,
+                    ...doc.data()
+                });
+            });
+
+            return reports;
         } catch (error) {
-            console.error('Error getting reports:', error);
+            console.error('Error getting reports from Firebase:', error);
             return [];
         }
     },
 
-    // Add a new report
-    addReport(reportData, userLocation) {
+    // Add a new report to Firebase
+    async addReport(reportData, userLocation) {
         try {
-            const existingReports = this.getActiveReports();
+            const reportsRef = collection(db, 'reports');
+
             const newReport = {
-                ...reportData,
-                id: Date.now(),
+                busNumber: reportData.busNumber,
+                direction: reportData.direction,
+                location: userLocation || {lat: 32.0853, lng: 34.7818},
                 timestamp: Date.now(),
-                location: userLocation || { lat: 32.0853, lng: 34.7818 } // Use real location or fallback to Tel Aviv
+                createdAt: serverTimestamp()
             };
 
-            const updatedReports = [...existingReports, newReport];
-            localStorage.setItem('busReports', JSON.stringify(updatedReports));
+            const docRef = await addDoc(reportsRef, newReport);
 
-            return newReport;
+            return {
+                id: docRef.id,
+                ...newReport
+            };
         } catch (error) {
-            console.error('Error adding report:', error);
+            console.error('Error adding report to Firebase:', error);
             throw error;
         }
     },
-
-    // Get reports count
-    getActiveCount() {
-        return this.getActiveReports().length;
-    }
 };

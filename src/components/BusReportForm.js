@@ -41,7 +41,7 @@ function BusReportForm({isOpen, onClose, onSubmit}) {
                 maxWidth: '400px'
             }}>
                 <h3 style={{marginBottom: '1rem', textAlign: 'center'}}>
-                    דיווח על צדוק תחבורתי
+                    דיווח צודק על צדוק
                 </h3>
 
                 <form onSubmit={handleSubmit}>
@@ -71,7 +71,7 @@ function BusReportForm({isOpen, onClose, onSubmit}) {
                         <label style={{
                             display: 'block', marginBottom: '0.5rem', direction: 'rtl'
                         }}>
-                            כיוון:
+                            לכיוון:
                         </label>
                         <input
                             type="text"
