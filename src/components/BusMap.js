@@ -233,32 +233,32 @@ function BusMap({reports = []}) {
                 onClick={handleCenterOnUser}
                 style={{
                     position: 'fixed',  // was 'absolute'
-                    bottom: '100px',
-                    right: '20px',
-                    backgroundColor: 'white',
-                    color: 'black',
-                    border: '1px solid #ddd',
-                    borderRadius: '8px',
-                    width: '44px',
-                    height: '44px',
+                    bottom: '80px',
+                    right: '-5px',
+                    color: '#20B2AA',
+                    border: 'none',
+                    width: '60px',
+                    height: '60px',
                     cursor: 'pointer',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
                     zIndex: 1000,
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'center'
+                    justifyContent: 'center',
+                    backgroundColor: 'transparent'
                 }}
                 title="מיקום שלי"
             >
 
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                    <circle cx="12" cy="12" r="2"/>
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+                    <circle cx="12" cy="12" r="3"/>
+                    {/* Changed from r="2" to r="3" */}
                     <path
                         d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4Z"/>
-                    <path d="M11,1V3A1,1 0 0,0 13,3V1A1,1 0 0,0 11,1Z"/>
-                    <path d="M1,11V13A1,1 0 0,0 3,13V11A1,1 0 0,0 1,11Z"/>
-                    <path d="M21,11V13A1,1 0 0,0 23,13V11A1,1 0 0,0 21,11Z"/>
-                    <path d="M11,21V23A1,1 0 0,0 13,23V21A1,1 0 0,0 11,21Z"/>
+                    <path d="M10,1V3A2,2 0 0,0 14,3V1A2,2 0 0,0 10,1Z"/>
+                    {/* Wider paths */}
+                    <path d="M1,10V14A2,2 0 0,0 3,14V10A2,2 0 0,0 1,10Z"/>
+                    <path d="M21,10V14A2,2 0 0,0 23,14V10A2,2 0 0,0 21,10Z"/>
+                    <path d="M10,21V23A2,2 0 0,0 14,23V21A2,2 0 0,0 10,21Z"/>
                 </svg>
             </button>
         </div>

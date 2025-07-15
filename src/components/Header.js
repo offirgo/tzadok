@@ -14,15 +14,15 @@ function Header() {
         <header style={{marginBottom: '0.5rem', position: 'relative'}}>
             {/* Person icon in top right */}
             <div style={{
-                position: 'absolute',
-                top: '-15px',
-                right: '7px',
+                position: 'fixed',        // Changed from 'absolute' to 'fixed'
+                top: '5px',             // Changed from '-10px' to '10px'
+                right: '10px',           // Changed from '-30px' to '10px'
                 width: '40px',
                 height: '40px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                backgroundColor: 'white',
+                // backgroundColor: 'white',
                 zIndex: 10
             }}>
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#333" strokeWidth="2">
@@ -55,20 +55,27 @@ function Header() {
             </div>
 
             {/* Text below the container */}
-            <div style={{marginTop: '20px', textAlign: 'center', maxWidth: '400px', margin: '20px auto 0'}}>
+            <div style={{
+                marginTop: '20px',
+                textAlign: 'center',
+                maxWidth: '400px',
+                margin: '20px auto 0',
+                fontFamily: 'Assistant',
+                lineHeight: '1',
+                fontWeight: '400'
+
+            }}>
                 <p style={{
                     margin: '0 0 8px 0',
                     fontSize: '14px',
-                    lineHeight: '1.4',
                     direction: 'rtl',
-                    color: '#333'
+                    color: '#333',
                 }}>
                     כאן תקבלו את הדיווחים הכי עדכניים על מיקום
                 </p>
                 <p style={{
                     margin: '0 0 8px 0',
                     fontSize: '14px',
-                    lineHeight: '1.4',
                     direction: 'rtl',
                     color: '#333'
                 }}>
@@ -77,11 +84,11 @@ function Header() {
                 <p style={{
                     margin: '0',
                     fontSize: '14px',
-                    lineHeight: '1.4',
                     direction: 'rtl',
                     color: '#20B2AA', // Turquoise color
                     textDecoration: 'underline',
-                    cursor: 'pointer'
+                    cursor: 'pointer',
+                    fontWeight: 'bold'
                 }}>
                     למידע נוסף
                 </p>
