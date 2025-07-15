@@ -1,4 +1,4 @@
-function Header() {
+function Header({onOpenAboutUs}) {
     const textStyle = {
         margin: '0',
         color: 'white',
@@ -89,7 +89,12 @@ function Header() {
                     textDecoration: 'underline',
                     cursor: 'pointer',
                     fontWeight: 'bold'
-                }}>
+                }}
+                   onClick={() => {
+                       onOpenAboutUs();
+                   }}
+                    // onClick={handleOpenAboutUs}
+                >
                     למידע נוסף
                 </p>
             </div>

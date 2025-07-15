@@ -5,12 +5,15 @@ import BusReportForm from '../components/BusReportForm';
 import {User} from '../entities/User';
 import {Report} from '../entities/Report';
 import {getCurrentLocation, isLocationAccurate} from '../utils/geolocation';
+import AboutUs from "../components/AboutUs";
 
 
 function Home() {
     const [isReportFormOpen, setIsReportFormOpen] = useState(false);
     const [reports, setReports] = useState([]); // Start with empty array
     const [setUserLocation] = useState(null);
+    const [isAboutUsOpen, setIsAboutUsOpen] = useState(false);
+
 
 // Load reports when component mounts
     useEffect(() => {
@@ -132,12 +135,20 @@ function Home() {
             alert(`שגיאה בשליחת הדיווח: ${error.message}`);
         }
     };
+    const handleOpenAboutUs = () => {
+        setIsAboutUsOpen(true);
+    };
 
+    const handleCloseAboutUs = () => {
+        console.log('Closing AboutUs!'); // Add this to test
+
+        setIsAboutUsOpen(false);
+    };
     return (
         <div>
             {/* Content header - this will stay at top and not shrink */}
             <div className="content-header">
-                <Header/>
+                <Header onOpenAboutUs={handleOpenAboutUs}/>
                 {/* Yellow banner when no reports */}
                 {reports.length === 0 && (
                     <div style={{
@@ -207,6 +218,7 @@ function Home() {
                 onClose={handleCloseReportForm}
                 onSubmit={handleSubmitReport}
             />
+            <AboutUs isAboutUsOpen={isAboutUsOpen} handleCloseAboutUs={handleCloseAboutUs}/>
         </div>
     );
 }
