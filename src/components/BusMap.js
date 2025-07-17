@@ -97,14 +97,28 @@ function BusMap({reports = []}) {
                 const marker = L.marker([lat, lng], {icon: eyeIcon})
                     .addTo(map)
                     .bindPopup(`
-                    <div style="text-align: right; direction: rtl; min-width: 150px;">
-                        <h4 style="margin: 0 0 8px 0; color: #dc2626;">🚌 צדוק הצדיק בשטח!</h4>
-                        <p style="margin: 4px 0;"><strong>אוטובוס:</strong> ${report.busNumber}</p>
-                        <p style="margin: 4px 0;"><strong>כיוון:</strong> ${report.direction}</p>
-                        <p style="margin: 4px 0; color: #666;"><strong>לפני:</strong> ${minutesAgo} דקות</p>
-                    </div>
-                `);
-
+        <div style="text-align: right; direction: rtl; min-width: 180px; padding: 8px;">
+            <h3 style="margin: 0 0 10px 0; color: #20B2AA; font-size: 26px; font-weight: bold;">הצד(ו)ק בשטח</h3>
+            
+            <div style="text-align: right; margin-bottom: 5px;">
+                <span style="font-size: 20px; font-weight: bold;">קו: </span>
+                <span style="font-size: 20px;">${report.busNumber}</span>
+            </div>
+            
+            <div style="text-align: right; margin-bottom: 5px;">
+                <span style="font-size: 20px; font-weight: bold;">כיוון: </span>
+                <span style="font-size: 20px;">${report.direction}</span>
+            </div>
+            
+            <div style="text-align: right;">
+                <span style="font-size: 20px; font-weight: bold;">בשעה: </span>
+                <span style="font-size: 20px;">${new Date(report.timestamp).toLocaleTimeString('he-IL', {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    })} (לפני ${minutesAgo} דקות)</span>
+            </div>
+        </div>
+    `);
                 map.reportMarkers.push(marker);
             });
         }
