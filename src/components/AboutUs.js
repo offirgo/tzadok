@@ -16,7 +16,8 @@ function AboutUs({isAboutUsOpen, handleCloseAboutUs}) {
             backgroundColor: 'rgba(0, 0, 0, 0.5)',
             display: 'flex',
             justifyContent: 'center',
-            alignItems: 'center',
+            alignItems: 'flex-start',        // Changed from 'center' to 'flex-start'
+            paddingTop: '100px',             // Add padding to push it down below header
             zIndex: 2000,
             padding: '20px'
         }}>
@@ -77,7 +78,7 @@ function AboutUs({isAboutUsOpen, handleCloseAboutUs}) {
                     </p>
 
                     <p style={{marginBottom: '16px'}}>
-                        <strong>3.</strong> האפליקציה תורד לאלתר ברגע ששרת התחבורה תמצא את (ה)צדוק.
+                        <strong>3.</strong> האפליקציה תורד לאלתר ברגע ששרת התחבורה תמצא את הצד(ו)ק.
                     </p>
 
                     <p style={{marginBottom: '24px'}}>
