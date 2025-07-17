@@ -49,8 +49,6 @@ function BusMap({reports = []}) {
                 setUserLocation(location); // Add this line
                 mapInstanceRef.current.setView([location.lat, location.lng], 14);
             } catch (error) {
-                // Location not available, keep default Tel Aviv center
-                console.log('Location not available on load:', error.message);
             }
         };
 
