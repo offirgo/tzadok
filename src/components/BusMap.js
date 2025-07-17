@@ -91,25 +91,19 @@ function BusMap({reports = []}) {
                     lng += Math.sin(angle) * offset;
                 }
 
-                const redIcon = L.icon({
-                    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
-                    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-                    iconSize: [25, 41],
-                    iconAnchor: [12, 41],
-                    popupAnchor: [1, -34],
-                    shadowSize: [41, 41]
-                });
+                // Create the fading eye icon
+                const eyeIcon = createEyeIcon(report.timestamp);
 
-                const marker = L.marker([lat, lng], {icon: redIcon})
+                const marker = L.marker([lat, lng], {icon: eyeIcon})
                     .addTo(map)
                     .bindPopup(`
-          <div style="text-align: right; direction: rtl; min-width: 150px;">
-            <h4 style="margin: 0 0 8px 0; color: #dc2626;">🚌 צדוק הצדיק בשטח!</h4>
-            <p style="margin: 4px 0;"><strong>אוטובוס:</strong> ${report.busNumber}</p>
-            <p style="margin: 4px 0;"><strong>כיוון:</strong> ${report.direction}</p>
-            <p style="margin: 4px 0; color: #666;"><strong>לפני:</strong> ${minutesAgo} דקות</p>
-          </div>
-        `);
+                    <div style="text-align: right; direction: rtl; min-width: 150px;">
+                        <h4 style="margin: 0 0 8px 0; color: #dc2626;">🚌 צדוק הצדיק בשטח!</h4>
+                        <p style="margin: 4px 0;"><strong>אוטובוס:</strong> ${report.busNumber}</p>
+                        <p style="margin: 4px 0;"><strong>כיוון:</strong> ${report.direction}</p>
+                        <p style="margin: 4px 0; color: #666;"><strong>לפני:</strong> ${minutesAgo} דקות</p>
+                    </div>
+                `);
 
                 map.reportMarkers.push(marker);
             });
@@ -178,6 +172,37 @@ function BusMap({reports = []}) {
         } catch (error) {
             alert(`כדי להשתמש במיקום שלי, יש לאפשר גישה למיקום:\n${error.message}`);
         }
+    };
+    const createEyeIcon = (reportTimestamp) => {
+        const now = Date.now();
+        const timeElapsed = (now - reportTimestamp) / (1000 * 60); // minutes elapsed
+
+        // Calculate opacity: 1.0 (just reported) to 0.2 (14 minutes old)
+        const opacity = Math.max(0.2, 1.0 - (timeElapsed / 14) * 0.8);
+
+        return L.icon({
+            iconUrl: 'data:image/svg+xml;base64,' + btoa(`
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 35 35" width="35" height="35">
+                <!-- White outer circle -->
+                <circle cx="17.5" cy="17.5" r="16" fill="white" opacity="${opacity}"/>
+                
+                <!-- Red background -->
+                <circle cx="17.5" cy="17.5" r="14" fill="#c0392b" opacity="${opacity}"/>
+                
+                <!-- Eye shape (white) -->
+                <ellipse cx="17.5" cy="17.5" rx="10" ry="5" fill="white" opacity="${opacity}"/>
+                
+                <!-- Pupil (red) -->
+                <circle cx="17.5" cy="17.5" r="3" fill="#c0392b" opacity="${opacity}"/>
+                
+                <!-- Small white highlight -->
+                <circle cx="18.5" cy="16.5" r="0.8" fill="white" opacity="${opacity}"/>
+            </svg>
+        `),
+            iconSize: [35, 35],
+            iconAnchor: [17.5, 17.5],
+            popupAnchor: [0, -17.5],
+        });
     };
     return (
         <div style={{position: 'relative'}}>
