@@ -8,22 +8,6 @@ function BusMap({reports = []}) {
     const mapInstanceRef = useRef(null);
     const [userLocation, setUserLocation] = useState(null); // Add this line
 
-    // get and show user location
-    // useEffect(() => {
-    //     if (!mapInstanceRef.current) return;
-    //
-    //     const getUserLocation = async () => {
-    //         try {
-    //             const location = await getCurrentLocation();
-    //             setUserLocation(location);
-    //         } catch (error) {
-    //             console.log('Could not get user location:', error.message);
-    //         }
-    //     };
-    //
-    //     getUserLocation();
-    // }, []);
-
     // Initialize map
     useEffect(() => {
         if (mapInstanceRef.current) return; // Map already exists

@@ -1,18 +1,12 @@
 import {useState} from 'react';
 
 function BusReportForm({isOpen, onClose, onSubmit}) {
-
     const [busNumber, setBusNumber] = useState('');
     const [direction, setDirection] = useState('');
 
-    console.log('BusReportForm rendered, isOpen:', isOpen); // Add this line
-
     if (!isOpen) {
-        console.log('BusReportForm: not open, returning null'); // Add this line
         return null;
     }
-
-    console.log('BusReportForm: should be showing!'); // Add this line
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -28,8 +22,6 @@ function BusReportForm({isOpen, onClose, onSubmit}) {
         }
     };
 
-    if (!isOpen) return null;
-
     return (
         <div style={{
             position: 'fixed',
@@ -37,100 +29,150 @@ function BusReportForm({isOpen, onClose, onSubmit}) {
             left: 0,
             right: 0,
             bottom: 0,
-            backgroundColor: 'rgba(0,0,0,0.5)',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
             display: 'flex',
-            alignItems: 'center',
+            alignItems: 'flex-start',
             justifyContent: 'center',
-            zIndex: 1000
+            zIndex: 2000,
+            padding: '20px',
+            paddingTop: '100px',
         }}>
             <div style={{
                 backgroundColor: 'white',
-                padding: '2rem',
                 borderRadius: '8px',
-                width: '80%',
-                maxWidth: '400px'
+                padding: '32px',
+                maxWidth: '500px',
+                width: '100%',
+                position: 'relative'
             }}>
-                <h3 style={{marginBottom: '1rem', textAlign: 'center'}}>
-                    דיווח צודק על צדוק
-                </h3>
+                {/* Close button */}
+                <button
+                    onClick={onClose}
+                    style={{
+                        position: 'absolute',
+                        top: '12px',
+                        right: '12px',
+                        background: 'none',
+                        border: 'none',
+                        fontSize: '24px',
+                        cursor: 'pointer',
+                        color: '#666'
+                    }}
+                >
+                    ×
+                </button>
+
+                {/* Title */}
+                <h2 style={{
+                    textAlign: 'center',
+                    direction: 'rtl',
+                    fontSize: '28px',
+                    fontWeight: 'bold',
+                    marginBottom: '5px',
+                    color: '#333'
+                }}>
+                    דיווח על צד(ו)ק
+                </h2>
+
+                {/* Subtitle */}
+                <div style={{
+                    textAlign: 'center',
+                    direction: 'rtl',
+                    fontSize: '14px',
+                    color: '#666',
+                    marginBottom: '32px',
+                    lineHeight: '1.4'
+                }}>
+                    הטקסט הוא טקסט חופשי, נסו לפרט כמה<br/>
+                    שיותר לטובת המשתמשים האחרים
+                </div>
 
                 <form onSubmit={handleSubmit}>
-                    <div style={{marginBottom: '1rem'}}>
+                    {/* Bus Number Section */}
+                    <div style={{
+                        marginBottom: '24px',
+                        direction: 'rtl',
+                        textAlign: 'right'
+                    }}>
                         <label style={{
-                            display: 'block', marginBottom: '0.5rem', direction: 'rtl'
+                            display: 'block',
+                            marginBottom: '8px',
+                            fontSize: '16px',
+                            fontWeight: 'bold',
+                            color: '#333'
                         }}>
-                            מספר אוטובוס:
+                            מספר אוטובוס
                         </label>
                         <input
                             type="text"
                             value={busNumber}
                             onChange={(e) => setBusNumber(e.target.value)}
-                            placeholder="לדוגמה: 5, 18, 480"
+                            placeholder="לדוגמא: קו 5"
                             style={{
                                 width: '100%',
-                                padding: '8px',
-                                border: '1px solid #ccc',
+                                padding: '12px 16px',
+                                border: '1px solid #ddd',
                                 borderRadius: '4px',
-                                direction: 'rtl'
+                                direction: 'rtl',
+                                fontSize: 'bold',
+                                boxSizing: 'border-box'
                             }}
                             required
                         />
                     </div>
 
-                    <div style={{marginBottom: '1.5rem'}}>
+                    {/* Direction Section */}
+                    <div style={{
+                        marginBottom: '32px',
+                        direction: 'rtl',
+                        textAlign: 'right'
+                    }}>
                         <label style={{
-                            display: 'block', marginBottom: '0.5rem', direction: 'rtl'
+                            display: 'block',
+                            marginBottom: '8px',
+                            fontSize: '16px',
+                            fontWeight: '600',
+                            color: '#333'
                         }}>
-                            לכיוון:
+                            לכיוון
                         </label>
                         <input
                             type="text"
                             value={direction}
                             onChange={(e) => setDirection(e.target.value)}
-                            placeholder={"לדוגמה: ירושלים, פלורנטין, רכבת מרכז"}
+                            placeholder="לדוגמא: לכיוון התחנה המרכזית"
                             style={{
                                 width: '100%',
-                                padding: '8px',
-                                border: '1px solid #ccc',
+                                padding: '12px 16px',
+                                border: '1px solid #ddd',
                                 borderRadius: '4px',
-                                direction: 'rtl'
-
+                                direction: 'rtl',
+                                fontSize: '16px',
+                                boxSizing: 'border-box'
                             }}
                             required
                         />
                     </div>
 
-                    <div style={{display: 'flex', gap: '1rem'}}>
-                        <button
-                            type="submit"
-                            style={{
-                                flex: 1,
-                                backgroundColor: '#16a34a',
-                                color: 'white',
-                                padding: '10px',
-                                border: 'none',
-                                borderRadius: '4px',
-                                cursor: 'pointer'
-                            }}
-                        >
-                            שלח דיווח
-                        </button>
-                        <button
-                            type="button"
-                            onClick={onClose}
-                            style={{
-                                flex: 1,
-                                backgroundColor: '#6b7280',
-                                color: 'white',
-                                padding: '10px',
-                                border: 'none',
-                                borderRadius: '4px',
-                                cursor: 'pointer'
-                            }}
-                        >
-                            ביטול
-                        </button>
-                    </div>
+                    {/* Submit Button */}
+                    <button
+                        type="submit"
+                        style={{
+                            width: '100%',
+                            backgroundColor: '#20B2AA',
+                            color: 'white',
+                            padding: '14px 24px',
+                            border: 'none',
+                            borderRadius: '4px',
+                            fontSize: '24px',
+                            fontWeight: '600',
+                            cursor: 'pointer',
+                            textAlign: 'center',
+                            direction: 'rtl'
+                        }}
+                    >
+                        שלח דיווח
+                    </button>
                 </form>
             </div>
         </div>

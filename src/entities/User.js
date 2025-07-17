@@ -1,6 +1,6 @@
 export const User = {
     // Google OAuth login with button approach
-    login() {
+    login(shouldOpenReportAfter = false) {
         if (!window.google) {
             alert('Google login is loading... Please try again in a moment.');
             return;
@@ -32,13 +32,10 @@ export const User = {
     },
 
     // Handle Google OAuth response
-    handleGoogleResponse(response) {
+    handleGoogleResponse(response, shouldOpenReportAfter = false) {
         try {
-            console.log('Google response:', response); // Debug log
-
             // Decode the JWT token to get user info
             const userInfo = JSON.parse(atob(response.credential.split('.')[1]));
-            console.log('User info:', userInfo); // Debug log
 
             const user = {
                 full_name: decodeURIComponent(escape(userInfo.name)), // Fix Hebrew encoding
@@ -48,7 +45,9 @@ export const User = {
             };
 
             localStorage.setItem('current_user', JSON.stringify(user));
-            localStorage.setItem('open_report_after_login', 'true'); // Flag to open report form
+            if (shouldOpenReportAfter) {
+                localStorage.setItem('open_report_after_login', 'true');
+            }
             window.location.reload();
         } catch (error) {
             console.error('Login error:', error);

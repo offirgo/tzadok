@@ -6,12 +6,14 @@ import {User} from '../entities/User';
 import {Report} from '../entities/Report';
 import {getCurrentLocation, isLocationAccurate} from '../utils/geolocation';
 import AboutUs from "../components/AboutUs";
+import LogoutConfirmation from "../components/LogoutConfirmation";
 
 
 function Home() {
     const [isReportFormOpen, setIsReportFormOpen] = useState(false);
     const [reports, setReports] = useState([]); // Start with empty array
     const [isAboutUsOpen, setIsAboutUsOpen] = useState(false);
+    const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
 
 // Load reports when component mounts
@@ -85,7 +87,7 @@ function Home() {
         } catch (error) {
             if (error.message.includes('Not logged in')) {
                 // Trigger Google login
-                User.login();
+                User.login(true);
             } else {
                 // Location error with helpful instructions
                 const retry = window.confirm(
@@ -145,14 +147,19 @@ function Home() {
             // Check if user is logged in
             await User.me();
             // If we get here, user is logged in, so logout
-            const confirmLogout = window.confirm('האם אתה בטוח שברצונך להתנתק?');
-            if (confirmLogout) {
-                User.logout();
-            }
+            setIsLogoutModalOpen(true);
         } catch (error) {
             // User is not logged in, so login
-            User.login();
+            User.login(false);
         }
+    };
+    const handleLogoutConfirm = () => {
+        User.logout();
+        setIsLogoutModalOpen(false);
+    };
+
+    const handleLogoutCancel = () => {
+        setIsLogoutModalOpen(false);
     };
     return (
         <div>
@@ -243,6 +250,11 @@ function Home() {
                 onSubmit={handleSubmitReport}
             />
             <AboutUs isAboutUsOpen={isAboutUsOpen} handleCloseAboutUs={handleCloseAboutUs}/>
+            <LogoutConfirmation
+                isOpen={isLogoutModalOpen}
+                onClose={handleLogoutCancel}
+                onConfirm={handleLogoutConfirm}
+            />
         </div>
     );
 }
