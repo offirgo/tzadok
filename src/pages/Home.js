@@ -14,7 +14,8 @@ function Home() {
     const [reports, setReports] = useState([]); // Start with empty array
     const [isAboutUsOpen, setIsAboutUsOpen] = useState(false);
     const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
-
+    let lastSubmissionTime = 0;
+    const COOLDOWN_MS = 10 * 1000;
 
 // Load reports when component mounts
     useEffect(() => {
@@ -108,6 +109,14 @@ function Home() {
 
     const handleSubmitReport = async (reportData) => {
         try {
+            const now = Date.now();
+            if (now - lastSubmissionTime < COOLDOWN_MS) {
+                alert("יש להמתין מספר שניות לפני שליחת דיווח נוסף.");
+                return;
+            }
+
+            lastSubmissionTime = now;
+
             const sanitizedData = sanitizeReportData(reportData);
 
             const currentLocation = await getCurrentLocation();
