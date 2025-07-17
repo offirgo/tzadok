@@ -3,23 +3,61 @@ import {useState} from 'react';
 function BusReportForm({isOpen, onClose, onSubmit}) {
     const [busNumber, setBusNumber] = useState('');
     const [direction, setDirection] = useState('');
+    const [busNumberError, setBusNumberError] = useState('');
+    const [directionError, setDirectionError] = useState('');
 
     if (!isOpen) {
         return null;
     }
 
+    const validateBusNumber = (value) => {
+        if (!/^\d+$/.test(value.trim())) {
+            return "מספר האוטובוס חייב להיות מספר שלם חיובי בלבד.";
+        }
+        return '';
+    };
+
+    const validateDirection = (value) => {
+        const trimmed = value.trim();
+
+        if (trimmed.length > 20) {
+            return "השדה 'לכיוון' לא יכול להכיל יותר מ-20 תווים.";
+        }
+
+        if (!/^[\u0590-\u05FFa-zA-Z0-9\s]+$/.test(trimmed)) {
+            return "השדה 'לכיוון' יכול להכיל רק אותיות, מספרים ורווחים – ללא סימנים מיוחדים.";
+        }
+
+        if (/<|>/.test(trimmed)) {
+            return "אסור להשתמש בתווים מיוחדים כמו < או >.";
+        }
+
+        return '';
+    };
+
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (busNumber.trim() && direction.trim()) {
-            onSubmit({
-                busNumber: busNumber.trim(),
-                direction: direction.trim(),
-                timestamp: Date.now()
-            });
-            setBusNumber('');
-            setDirection('');
-            onClose();
+
+        const busError = validateBusNumber(busNumber);
+        const directionError = validateDirection(direction);
+
+        setBusNumberError(busError);
+        setDirectionError(directionError);
+
+        if (busError || directionError) {
+            return;
         }
+
+        onSubmit({
+            busNumber: busNumber.trim(),
+            direction: direction.trim(),
+            timestamp: Date.now()
+        });
+
+        setBusNumber('');
+        setDirection('');
+        onClose();
     };
 
     return (
@@ -45,7 +83,6 @@ function BusReportForm({isOpen, onClose, onSubmit}) {
                 width: '100%',
                 position: 'relative'
             }}>
-                {/* Close button */}
                 <button
                     onClick={onClose}
                     style={{
@@ -62,7 +99,6 @@ function BusReportForm({isOpen, onClose, onSubmit}) {
                     ×
                 </button>
 
-                {/* Title */}
                 <h2 style={{
                     textAlign: 'center',
                     direction: 'rtl',
@@ -74,7 +110,6 @@ function BusReportForm({isOpen, onClose, onSubmit}) {
                     דיווח על צד(ו)ק
                 </h2>
 
-                {/* Subtitle */}
                 <div style={{
                     textAlign: 'center',
                     direction: 'rtl',
@@ -107,18 +142,26 @@ function BusReportForm({isOpen, onClose, onSubmit}) {
                             type="text"
                             value={busNumber}
                             onChange={(e) => setBusNumber(e.target.value)}
-                            placeholder="לדוגמא: קו 5"
+                            placeholder="לדוגמא: 5"
                             style={{
                                 width: '100%',
                                 padding: '12px 16px',
                                 border: '1px solid #ddd',
                                 borderRadius: '4px',
                                 direction: 'rtl',
-                                fontSize: 'bold',
+                                fontSize: '16px',
                                 boxSizing: 'border-box'
                             }}
                             required
                         />
+                        <div style={{fontSize: '12px', color: '#888', marginTop: '4px'}}>
+                            ניתן להזין רק מספרים שלמים חיוביים, שלוש ספרות לכל היותר
+                        </div>
+                        {busNumberError && (
+                            <div style={{color: 'red', fontSize: '14px', marginTop: '4px'}}>
+                                {busNumberError}
+                            </div>
+                        )}
                     </div>
 
                     {/* Direction Section */}
@@ -152,9 +195,16 @@ function BusReportForm({isOpen, onClose, onSubmit}) {
                             }}
                             required
                         />
+                        <div style={{fontSize: '12px', color: '#888', marginTop: '4px'}}>
+                            ניתן להזין עד 20 אותיות בעברית/אנגלית, מספרים ורווחים בלבד. אין להזין סימנים מיוחדים.
+                        </div>
+                        {directionError && (
+                            <div style={{color: 'red', fontSize: '14px', marginTop: '4px'}}>
+                                {directionError}
+                            </div>
+                        )}
                     </div>
 
-                    {/* Submit Button */}
                     <button
                         type="submit"
                         style={{
@@ -171,6 +221,7 @@ function BusReportForm({isOpen, onClose, onSubmit}) {
                             direction: 'rtl'
                         }}
                     >
+                        שלח דיווח
                         שלח דיווח
                     </button>
                 </form>
