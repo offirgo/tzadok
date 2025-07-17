@@ -125,9 +125,6 @@ function Home() {
             // Refresh reports from Firebase
             const updatedReports = await Report.getActiveReports();
             setReports(updatedReports);
-
-            console.log('Report saved to Firebase successfully!');
-
         } catch (error) {
             console.error('Error submitting report:', error);
             alert(`שגיאה בשליחת הדיווח: ${error.message}`);
@@ -138,8 +135,6 @@ function Home() {
     };
 
     const handleCloseAboutUs = () => {
-        console.log('Closing AboutUs!'); // Add this to test
-
         setIsAboutUsOpen(false);
     };
     const handleUserIconClick = async () => {

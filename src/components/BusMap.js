@@ -221,7 +221,7 @@ function BusMap({reports = []}) {
     return (
         <div style={{
             position: 'relative',
-            height: 'calc(100vh - 150px)',
+            height: 'calc(100vh - 180px)',
             width: '100%',
         }}>
             {/* Map container */}
