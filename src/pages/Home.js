@@ -173,6 +173,10 @@ function Home() {
                 {/* Yellow banner when no reports */}
                 {reports.length === 0 && (
                     <div style={{
+                        position: 'absolute',          // Take it out of document flow
+                        top: '0',                      // Position at top of map
+                        left: '0',                     // Full width
+                        right: '0',                    // Full width
                         backgroundColor: '#FEF3C7',
                         padding: '12px 10px',
                         textAlign: 'center',
@@ -181,7 +185,9 @@ function Home() {
                         color: '#92400E',
                         borderBottom: '1px solid #FDE68A',
                         fontWeight: 'bold',
-                        width: '100%'
+                        zIndex: 1000,                  // Above map
+                        boxSizing: 'border-box',
+                        marginTop: '180px'// Include padding in width
                     }}>
                         אין דיווחים - או שהכל טוב ומירי רגב ויתרה לנו היום או שאף אחד לא דיווח
                     </div>

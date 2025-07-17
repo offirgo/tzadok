@@ -219,13 +219,17 @@ function BusMap({reports = []}) {
         });
     };
     return (
-        <div style={{position: 'relative'}}>
+        <div style={{
+            position: 'relative',
+            height: '100vh',
+            width: '100%'
+        }}>
             {/* Map container */}
             <div
                 ref={mapRef}
                 style={{
-                    height: '100%',                   // was '300px'
-                    minHeight: 'calc(100vh - 200px)', // fallback
+                    height: '100%',
+                    width: '100%'
                 }}
             />
 
