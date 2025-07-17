@@ -190,7 +190,7 @@ function BusMap({reports = []}) {
         const timeElapsed = (now - reportTimestamp) / (1000 * 60); // minutes elapsed
 
         // Calculate opacity: 1.0 (just reported) to 0.2 (14 minutes old)
-        const opacity = Math.max(0.2, 1.0 - (timeElapsed / 14) * 0.8);
+        const opacity = Math.max(0.5, 1.0 - (timeElapsed / 14) * 0.8);
 
         return L.icon({
             iconUrl: 'data:image/svg+xml;base64,' + btoa(`
