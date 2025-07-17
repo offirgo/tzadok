@@ -108,10 +108,10 @@ function Home() {
 
     const handleSubmitReport = async (reportData) => {
         try {
-            // Re-check location at submission time (mandatory!)
+            const sanitizedData = sanitizeReportData(reportData);
+
             const currentLocation = await getCurrentLocation();
 
-            // Check if location is accurate enough
             if (!isLocationAccurate(currentLocation)) {
                 const proceed = window.confirm(
                     `דיוק המיקום נמוך (${Math.round(currentLocation.accuracy)} מטר). האם להמשיך בכל זאת?`
@@ -119,10 +119,8 @@ function Home() {
                 if (!proceed) return;
             }
 
-            // Submit to Firebase
-            await Report.addReport(reportData, currentLocation);
+            await Report.addReport(sanitizedData, currentLocation);
 
-            // Refresh reports from Firebase
             const updatedReports = await Report.getActiveReports();
             setReports(updatedReports);
         } catch (error) {
@@ -130,6 +128,26 @@ function Home() {
             alert(`שגיאה בשליחת הדיווח: ${error.message}`);
         }
     };
+
+    const sanitizeReportData = (data) => {
+        const cleanBusNumber = data.busNumber?.trim();
+        const cleanDirection = data.direction?.trim();
+
+        if (!/^\d{1,3}$/.test(cleanBusNumber)) {
+            throw new Error("מספר אוטובוס לא חוקי");
+        }
+
+        if (!/^[\u0590-\u05FFa-zA-Z0-9\s]{1,20}$/.test(cleanDirection)) {
+            throw new Error("טקסט לכיוון לא חוקי");
+        }
+
+        return {
+            ...data,
+            busNumber: cleanBusNumber,
+            direction: cleanDirection,
+        };
+    };
+
     const handleOpenAboutUs = () => {
         setIsAboutUsOpen(true);
     };
