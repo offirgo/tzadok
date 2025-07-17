@@ -11,7 +11,6 @@ import AboutUs from "../components/AboutUs";
 function Home() {
     const [isReportFormOpen, setIsReportFormOpen] = useState(false);
     const [reports, setReports] = useState([]); // Start with empty array
-    const [setUserLocation] = useState(null);
     const [isAboutUsOpen, setIsAboutUsOpen] = useState(false);
 
 
@@ -72,7 +71,6 @@ function Home() {
 
             // Get location - this is MANDATORY
             const location = await getCurrentLocation();
-            console.log('Got location:', location); // Debug log
 
             // Check if location is accurate enough
             if (!isLocationAccurate(location)) {
@@ -82,8 +80,6 @@ function Home() {
                 if (!proceed) return;
             }
 
-            // Store location and open form
-            setUserLocation(location);
             setIsReportFormOpen(true);
 
         } catch (error) {
@@ -144,11 +140,29 @@ function Home() {
 
         setIsAboutUsOpen(false);
     };
+    const handleUserIconClick = async () => {
+        try {
+            // Check if user is logged in
+            await User.me();
+            // If we get here, user is logged in, so logout
+            const confirmLogout = window.confirm('האם אתה בטוח שברצונך להתנתק?');
+            if (confirmLogout) {
+                User.logout();
+            }
+        } catch (error) {
+            // User is not logged in, so login
+            User.login();
+        }
+    };
     return (
         <div>
             {/* Content header - this will stay at top and not shrink */}
             <div className="content-header">
-                <Header onOpenAboutUs={handleOpenAboutUs}/>
+                <Header
+                    onOpenAboutUs={handleOpenAboutUs}
+                    onUserIconClick={handleUserIconClick}
+                />
+
                 {/* Yellow banner when no reports */}
                 {reports.length === 0 && (
                     <div style={{
@@ -182,29 +196,39 @@ function Home() {
                 width: 'calc(100% - 40px)',
                 maxWidth: '400px',
             }}>
-                <button style={{
-                    width: '100%',
-                    backgroundColor: '#20B2AA',
-                    color: 'white',
-                    paddingTop: '8px',
-                    paddingBottom: '12px',
-                    border: 'none',
-                    borderRadius: '4px',
-                    fontSize: '28px',
-                    fontWeight: 700,
-                    style: 'bold',
-                    cursor: 'pointer',
-                    textAlign: 'center',
-                    direction: 'rtl',
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-                    lineHeight: '1.0'
+                <button
+                    onClick={handleOpenReportForm}
+                    style={{
+                        width: '100%',
+                        backgroundColor: '#20B2AA',
+                        color: 'white',
+                        paddingTop: '8px',
+                        paddingBottom: '12px',
+                        border: 'none',
+                        borderRadius: '4px',
+                        fontSize: '28px',
+                        fontWeight: 700,
+                        style: 'bold',
+                        cursor: 'pointer',
+                        textAlign: 'center',
+                        direction: 'rtl',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                        lineHeight: '1.0'
 
-                }}>
-                    <div>התחברו ודווחו על פקח</div>
+                    }}>
+                    <div>
+                        {(() => {
+                            try {
+                                const userData = localStorage.getItem('current_user');
+                                return userData ? 'דווחו על פקח' : 'התחברו ודווחו על פקח';
+                            } catch {
+                                return 'התחברו ודווחו על פקח';
+                            }
+                        })()}
+                    </div>
                     <div style={{
                         fontSize: '18px',
                         fontWeight: 400,
-                        style: 'regular',
                         marginTop: '4px',
                         opacity: '0.9'
                     }}>

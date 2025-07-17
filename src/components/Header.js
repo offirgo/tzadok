@@ -1,4 +1,4 @@
-function Header({onOpenAboutUs}) {
+function Header({onOpenAboutUs, onUserIconClick}) {
     const textStyle = {
         margin: '0',
         color: 'white',
@@ -14,21 +14,47 @@ function Header({onOpenAboutUs}) {
         <header style={{marginBottom: '0.5rem', position: 'relative'}}>
             {/* Person icon in top right */}
             <div style={{
-                position: 'fixed',        // Changed from 'absolute' to 'fixed'
-                top: '5px',             // Changed from '-10px' to '10px'
-                right: '10px',           // Changed from '-30px' to '10px'
+                position: 'fixed',
+                top: '5px',
+                right: '10px',
                 width: '40px',
                 height: '40px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                // backgroundColor: 'white',
-                zIndex: 10
-            }}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#333" strokeWidth="2">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                    <circle cx="12" cy="7" r="4"/>
-                </svg>
+                zIndex: 10,
+                cursor: 'pointer'
+            }}
+                 onClick={onUserIconClick}
+            >
+                <div style={{
+                    position: 'relative'  // Move the relative positioning to a wrapper div
+                }}>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#333" strokeWidth="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                    {/* Status dot */}
+                    <div style={{
+                        position: 'absolute',
+                        top: '2px',
+                        right: '7px',
+                        width: '8px',
+                        height: '8px',
+                        borderRadius: '50%',
+                        backgroundColor: (() => {
+                            try {
+                                const userData = localStorage.getItem('current_user');
+                                return userData ? '#20B2AA' : '#000';
+                            } catch {
+                                return '#000';
+                            }
+                        })(),
+                        border: '1px solid white',
+                        boxShadow: '0 1px 3px rgba(0,0,0,0.2)'
+                    }}>
+                    </div>
+                </div>
             </div>
 
             {/* Black container with white text */}

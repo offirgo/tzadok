@@ -1,8 +1,18 @@
 import {useState} from 'react';
 
 function BusReportForm({isOpen, onClose, onSubmit}) {
+
     const [busNumber, setBusNumber] = useState('');
     const [direction, setDirection] = useState('');
+
+    console.log('BusReportForm rendered, isOpen:', isOpen); // Add this line
+
+    if (!isOpen) {
+        console.log('BusReportForm: not open, returning null'); // Add this line
+        return null;
+    }
+
+    console.log('BusReportForm: should be showing!'); // Add this line
 
     const handleSubmit = (e) => {
         e.preventDefault();
