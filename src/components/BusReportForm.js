@@ -222,7 +222,6 @@ function BusReportForm({isOpen, onClose, onSubmit}) {
                         }}
                     >
                         שלח דיווח
-                        שלח דיווח
                     </button>
                 </form>
             </div>
